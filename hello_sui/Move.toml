@@ -1,0 +1,12 @@
+[package]
+name = "hello_sui"
+edition = "2024.beta" # edition = "legacy" to use legacy (pre-2024) Move
+license = "MIT" # e.g., "MIT", "GPL", "Apache 2.0"
+authors = [
+    "Rasheed",
+] # e.g., ["Joe Smith (joesmith@noemail.com)", "John Snow (johnsnow@noemail.com)"]
+
+[dependencies]
+
+# Read more about the package management system options:
+# https://docs.sui.io/guides/developer/sui-101/move-package-management
