@@ -37,3 +37,38 @@ module hello_sui::calculator {
         a % 2 == 0
     }
 }
+
+module hello_sui::bank{
+    fun deposit(amount: u64): u64 {amount}
+    fun withdraw(amount: u64): u64 {amount}
+    fun calculate_fee(amount: u64): u64{
+        let rate: u64 = 6/1000;
+        amount * rate
+    }
+    public fun can_withdraw(amount: u64): bool{
+        if(amount <= deposit(amount)){
+            true
+        }else{
+            false
+        }
+    }
+
+    public fun calculate_bonus(balance: u64): u64{
+        if(balance >= 1000000){
+            let bonus: u64 = 5/100;
+            balance * bonus
+        }else{
+            0
+        }
+    }
+
+    public fun get_account_level(balance: u64): u64{
+        if(balance >= 5000000){
+            1
+        }else if(balance >= 350000 && balance < 5000000){
+            2
+        }else{
+            3
+        }
+    }
+}
