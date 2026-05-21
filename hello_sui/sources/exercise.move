@@ -72,3 +72,17 @@ module hello_sui::bank{
         }
     }
 }
+
+module hello_sui::vault{
+    fun calculate_interest(balance: u64): u64{
+        balance * 3/1000
+    }
+
+    public fun preview_interest(balance: u64): u64{
+        calculate_interest(balance)
+    }
+
+    entry fun claim_rewards(balance: u64){
+        let reward: u64 = calculate_interest(balance);  
+        }
+}

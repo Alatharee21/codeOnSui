@@ -48,4 +48,16 @@ module hello_sui::practice{
             3 //Bronze reward
         }
     }
+
+    fun square(num: u64): u64{
+        num*num
+    }
+
+    public fun preview_square(num: u64): u64{
+        square(num)
+    }
+
+    entry fun compute(num: u64){
+        let result: u64 = square(num);
+    }
 }
