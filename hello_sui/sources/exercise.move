@@ -1,11 +1,4 @@
-/*module exercise::exercise {
-    public fun divide(a: u64, b: u64): u64{}
-    public fun is_positive(num: u64): bool{}
-    public fun min(a: u64, b: u64): u64{}
-    public fun is_multiple_of_5(num: u64): bool{}
-    public fun calculate_reward(stake: u64, percent: u64): u64{}
-    public fun can_withdraw(balance: u64, amount: u64): bool{}
-}*/
+
 module hello_sui::calculator {
     public fun add(a: u64, b: u64): u64 {
         a + b
@@ -36,6 +29,31 @@ module hello_sui::calculator {
     public fun is_even(a: u64): bool {
         a % 2 == 0
     }
+
+
+#[test]
+
+fun test_add(){
+    let result = add(2, 3);
+    assert!(result == 5, 0);
+}
+
+#[test]
+fun test_add_2(){
+    let result = add(2, 3);
+    assert!(result == 7, 0);
+}
+
+#[test]
+fun test_is_even(){
+    assert!(is_even(7), 0);
+}
+
+#[test]
+fun test_is_noteven(){
+    assert!(!is_even(7), 0);
+}
+
 }
 
 module hello_sui::bank{
@@ -45,8 +63,8 @@ module hello_sui::bank{
         let rate: u64 = 6/1000;
         amount * rate
     }
-    public fun can_withdraw(amount: u64): bool{
-        if(amount <= deposit(amount)){
+    public fun can_withdraw(amount: u64, balance: u64): bool{
+        if(amount <= balance){
             true
         }else{
             false
@@ -71,9 +89,26 @@ module hello_sui::bank{
             3
         }
     }
+
+    #[test]
+    fun test_deposit(){
+        let amount: u64 = 1000;
+        let result = deposit(amount);
+        assert!(result == 1000, 0);
+    }
+
+    #[test]
+    fun test_can_withdraw(){
+        let amount: u64 = 2000;
+        let balance: u64 = 1067;
+        assert!(can_withdraw(amount, balance), 0);
+    }
 }
 
 module hello_sui::vault{
+    use std::unit_test::assert_eq;
+    use std::u64;
+
     fun calculate_interest(balance: u64): u64{
         balance * 3/1000
     }
@@ -82,7 +117,68 @@ module hello_sui::vault{
         calculate_interest(balance)
     }
 
-    entry fun claim_rewards(balance: u64){
+    entry fun claim_rewards(balance: u64): u64{
         let reward: u64 = calculate_interest(balance);  
+        reward
+    }
+
+        #[test]
+        fun test_calculate_interest(){
+            let balance: u64 = 1000000;
+            let result = calculate_interest(balance);
+            assert!(result == 3000, 0);
         }
+
+        #[test]
+        fun test_claim_rewards(){
+            let balance: u64 = 1000000;
+            let result = claim_rewards(balance);
+            assert_eq!(result, 3000);
+        }
+}
+
+module hello_sui::pet{
+    use sui::object::{Self, UID};
+    use sui::tx_context::{Self, TxContext};
+    use sui::transfer;
+
+    public struct Pet has key, store{
+        id: UID,
+        name: vector<u8>,
+        level: u64,
+        health: u64,
+    }
+
+    entry fun create_Pet(
+        name: vector<u8>,
+        level: u64,
+        health: u64,
+        ctx: &mut TxContext
+    ){
+        let pet = Pet{
+            id: object::new(ctx),
+            name,
+            level,
+            health,
+        };
+        transfer::public_transfer(pet, tx_context::sender(ctx));
+    }
+
+    public fun preview_power(level: u64, health: u64): u64{
+        level * health
+    }
+
+    #[test]
+    fun test_create_Pet(){
+        let name: vector<u8> = b"Fluffy";
+        let level: u64 = 5;
+        let health: u64 = 100;
+        // Create a pet and assert its properties
+        assert!(name == b"Fluffy", 0);
+        assert!(level == 5, 0);
+        assert!(health == 100, 0);
+
+        let power = preview_power(level, health);
+        assert!(power == 500, 0);
+    }
 }

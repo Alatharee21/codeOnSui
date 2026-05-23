@@ -1,4 +1,8 @@
 module hello_sui::practice{
+    use sui::object::{Self, UID};
+    use sui::tx_context::{Self, TxContext};
+    use sui::transfer;
+
     fun divide(a: u64, b: u64): u64{
         a/b
     }
@@ -60,4 +64,20 @@ module hello_sui::practice{
     entry fun compute(num: u64){
         let result: u64 = square(num);
     }
-}
+
+    public struct Monster has key, store{
+        id: UID,
+        strength: u64,
+    } 
+
+    entry fun create_Monster(
+        strength: u64,
+        ctx: &mut TxContext,
+    ){
+        let monster = Monster {
+            id: object::new(ctx),
+            strength,
+            };
+            transfer::public_transfer(monster, tx_context::sender(ctx));
+            }
+    }
