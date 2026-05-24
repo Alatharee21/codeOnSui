@@ -1,19 +1,22 @@
-/*
 #[test_only]
 module hero_registry::hero_registry_tests;
-// uncomment this line to import the module
-// use hero_registry::hero_registry;
 
-#[error(code = 0)]
-const ENotImplemented: vector<u8> = b"Not Implemented";
+use hero_registry::hero_registry;
+use std::unit_test::assert_eq;
 
 #[test]
-fun test_hero_registry() {
-    // pass
+fun test_create_hero(){
+    let mut ctx = sui::tx_context::dummy();
+    let name = b"Hero1";
+    let heart = 100;
+    let age = 30;
+    let kills = 10;
+    let power = hero_registry::calculate_power(heart, age, kills);
+    hero_registry::create_hero(name, heart, age, kills, power, &mut ctx);
+    
+    assert!(power == 33, 0);
+    assert!(name == b"Hero1", 0);
+    assert!(heart == 100, 0);
+    assert!(age == 30, 0);
+    assert!(kills == 10, 0);
 }
-
-#[test, expected_failure(abort_code = ::hero_registry::hero_registry_tests::ENotImplemented)]
-fun test_hero_registry_fail() {
-    abort ENotImplemented
-}
-*/
