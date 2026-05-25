@@ -60,4 +60,26 @@ module hello_sui::guide{
         
         object::delete(id);
     }
+
+    //GuildBadge
+    public struct GuildBadge has key, store{
+        id: UID,
+        guild_name: vector<u8>,
+        rank: u64,
+    }
+
+    entry fun create_Badge(
+        guild_name: vector<u8>,
+        rank: u64,
+        ctx: &mut TxContext
+    ){
+        let guildBadge = GuildBadge{
+            id: object::new(ctx),
+            rank,
+            guild_name,
+        };
+        //transfer::public_transfer(guildBadge, tx_context::sender(ctx));//owned
+        //transfer::share_object(guildBadge);//shared
+        transfer::freeze_object(guildBadge);//immutable
+    }
 }

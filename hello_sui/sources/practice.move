@@ -115,4 +115,36 @@ module hello_sui::practice{
                 public fun access_defense(knight: &Knight): u64{
                     knight.armor.defense
                 }
+
+                public struct Sword has key, store{
+                    id: UID,
+                    damage: u64,
+                }// This sword object is owned because it is unique for each individual therefore can't be shared
+
+                /*examples of owned Object
+                - NFT
+                - Asset(crypto)
+                - Profile data
+                */
+                /*examples of shared Object
+                - Marketplace
+                - Launchpool
+                - Staking protocol
+                */
+                /*examples of immutable Object
+                - Software Developer Kit(SDK)
+                - Protocol Constants
+                - Game Rules
+                */
+
+                entry fun create_Sword(
+                    damage: u64,
+                    ctx: &mut TxContext
+                ){
+                    let sword = Sword { 
+                        id: object::new(ctx),
+                        damage,
+};
+transfer::public_transfer(sword, tx_context::sender(ctx));
+}
             }
