@@ -80,4 +80,39 @@ module hello_sui::practice{
             };
             transfer::public_transfer(monster, tx_context::sender(ctx));
             }
-    }
+
+            public struct Armor has store{
+                defense: u64,
+                durability: u64,
+            }
+
+            public struct Knight has key, store{
+                id: UID,
+                armor: Armor,
+                health: u64,
+            }
+
+            entry fun create_Knight(
+                defense: u64,
+                durability: u64,
+                health: u64,
+                ctx: &mut TxContext
+            ){
+                let armor = Armor{
+                    defense,
+                    durability,
+                };
+
+                let knight = Knight {
+                    id: object::new(ctx),
+                    armor,
+                    health,
+                };
+
+                transfer::public_transfer(knight, tx_context::sender(ctx));
+                }
+
+                public fun access_defense(knight: &Knight): u64{
+                    knight.armor.defense
+                }
+            }

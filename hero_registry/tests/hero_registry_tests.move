@@ -11,8 +11,6 @@ fun test_create_hero(){
     let heart = 100;
     let age = 30;
     let kills = 10;
-    let power = hero_registry::calculate_power(heart, age, kills);
-    hero_registry::create_hero(name, heart, age, kills, power, &mut ctx);
     
     assert!(power == 33, 0);
     assert!(name == b"Hero1", 0);

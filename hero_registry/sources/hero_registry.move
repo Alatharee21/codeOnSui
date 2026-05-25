@@ -16,6 +16,7 @@ module hero_registry::hero_registry{
         heart: u64,
         age: u64,
         kills: u64,
+        power: u64,
     }
 
     entry fun create_hero(
@@ -23,6 +24,7 @@ module hero_registry::hero_registry{
         heart: u64,
         age: u64,
         kills: u64,
+        power: u64,
         ctx: &mut TxContext
     ){
         let hero = Hero {
@@ -31,6 +33,7 @@ module hero_registry::hero_registry{
             heart,
             age,
             kills,
+            power,
         };
         transfer::public_transfer(hero, tx_context::sender(ctx));
         }

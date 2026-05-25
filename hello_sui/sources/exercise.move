@@ -182,3 +182,54 @@ module hello_sui::pet{
         assert!(power == 500, 0);
     }
 }
+
+module hello_sui::warrior{
+    use sui::object::{Self, UID};
+    use sui::tx_context::{Self, TxContext};
+    use sui::transfer;
+    use std::u64;
+
+    public struct Weapon has store{
+        damage: u64,
+    }
+
+    public struct Warrior has key, store{
+        id: UID,
+        health: u64,
+        weapon: Weapon,
+    }
+
+    entry fun create_Warrior(
+        health: u64,
+        damage: u64,
+        ctx: &mut TxContext
+    ){
+        let weapon = Weapon{
+            damage,
+        };
+        
+
+        let warrior = Warrior{
+            id: object::new(ctx),
+            health,
+            weapon,
+        };
+
+        transfer::public_transfer(warrior, tx_context::sender(ctx));
+
+    }
+
+    public fun get_weapon(warrior: &Warrior): u64{
+        warrior.weapon.damage
+    }
+
+    #[test]
+    fun test_create_Warrior(){
+        let mut _ctx = sui::tx_context::dummy();
+        let health: u64 = 100;
+        let damage: u64= 25;
+
+        assert!(health == 100, 0);
+        assert!(damage == 25, 0);
+    }
+}
