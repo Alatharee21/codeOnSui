@@ -1,5 +1,6 @@
 /// Module: hello_sui
 module hello_sui::hello{
+    use std::vector;
     //u8,u16,u32,u64,u128,u256
     /*let explicit_u8 = 1u8;
     let explicit_u64_underscored = 154_322_973u64;
@@ -11,6 +12,33 @@ module hello_sui::hello{
     //vector
     //struct
 
+    public fun check_vec(): vector<u8>{
+    let mut numbers: vector<u8> = vector[];//Has to have mut to be mutable
+    let check: vector<bool> = vector[true, false];
+
+    //These push these figures into numbers
+    vector::push_back(&mut numbers, 100);
+    vector::push_back(&mut numbers, 200);
+    vector::push_back(&mut numbers, 210);
+    vector::push_back(&mut numbers, 230);
+
+    //This removes the last figure(230)
+    vector::pop_back(&mut numbers);
+
+    let gradeA = vector::borrow(
+        &numbers,
+        1
+    );// This borrows [200]
+    let gradeB = vector::borrow_mut(
+        &mut numbers,
+        0
+    );
+    *gradeB = 123;// this turns [100] to [123]
+
+    vector::length(&numbers);
+
+    numbers
+    }
     //Private function not accessible outside of this module
     fun add(a: u64, b: u64): u64 {
         a + b
