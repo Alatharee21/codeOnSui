@@ -147,4 +147,24 @@ module hello_sui::practice{
 };
 transfer::public_transfer(sword, tx_context::sender(ctx));
 }
+
+public struct Shield has key, store{
+    id: UID,
+    defense: u64,
+}
+
+entry fun create_shield(
+    defense: u64,
+    ctx: &mut TxContext
+){
+    let shield = Shield{
+        id: object::new(ctx),
+        defense,
+    };
+    transfer::public_transfer(shield, tx_context::sender(ctx));
+}
+
+entry fun send_shield(shield: Shield, recipient: address){
+    transfer::public_transfer(shield, recipient);
+}
             }

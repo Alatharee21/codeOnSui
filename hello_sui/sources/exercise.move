@@ -233,3 +233,33 @@ module hello_sui::warrior{
         assert!(damage == 25, 0);
     }
 }
+
+module hello_sui::ticket{
+    public struct Ticket has key, store{
+        id: UID,
+        event_name: vector<u8>,
+        seat_number: u64,
+    }
+
+    entry fun create_ticket(
+        event_name: vector<u8>,
+        seat_number: u64,
+        ctx: &mut TxContext
+    ){
+        let ticket = Ticket{
+        id: object::new(ctx),
+        event_name,
+        seat_number,
+        };
+        
+        transfer::public_transfer(ticket, tx_context::sender(ctx));
+    }
+
+    entry fun send_ticket(ticket: Ticket, recipient: address){
+        transfer::public_transfer(ticket, recipient);
+    }
+
+    public fun get_seat(ticket: &Ticket): u64{
+        ticket.seat_number
+    }
+}
