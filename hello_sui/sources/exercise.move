@@ -223,6 +223,10 @@ module hello_sui::warrior{
         warrior.weapon.damage
     }
 
+    public fun train(warrior: &mut Warrior){
+        warrior.health = warrior.health + 3
+    }
+
     #[test]
     fun test_create_Warrior(){
         let mut _ctx = sui::tx_context::dummy();
