@@ -10,7 +10,7 @@ module hello_sui::nft{
 
     entry fun mint_nft(
         name: vector<u8>,
-        ctx: &mut TxContext
+        ctx: &mut TxContext /*&mut means it is a mutable reference*/
     ){
         let nft = NFT{
             id: object::new(ctx),
@@ -25,5 +25,9 @@ module hello_sui::nft{
         recipient: address
     ){
         transfer::public_transfer(nft, recipient);
+    }
+
+    public fun get_nft_Name(nft: &NFT/*& means it is immutable reference*/): vector<u8>{
+        nft.name
     }
 }

@@ -167,4 +167,8 @@ entry fun create_shield(
 entry fun send_shield(shield: Shield, recipient: address){
     transfer::public_transfer(shield, recipient);
 }
+
+public fun upgrade_defense(shield: &mut Shield){
+    shield.defense = shield.defense + 5;
+}
             }
