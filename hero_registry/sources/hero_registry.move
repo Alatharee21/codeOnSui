@@ -47,14 +47,16 @@ module hero_registry::hero_registry{
         public fun get_Hero_kills(hero: &Hero): u64{
             hero.kills
         }
-        fun calculate_power(heart: u64, age: u64, kills: u64): u64{
-            (heart * kills)/age
+        public fun calculate_power(hero: &mut Hero): u64{
+            let power: u64 = (hero.heart * hero.kills)/hero.age;
+            hero.power = power;
+            power
         }
-        public fun get_Hero_power(heart: u64, age: u64, kills: u64): u64{
-            calculate_power(heart, age, kills)
+        public fun get_Hero_power(hero: &Hero): u64{
+            hero.power
         }
-        public fun is_Alive(heart: u64): bool{
-            if(heart > 0){
+        public fun is_Alive(hero: &Hero): bool{
+            if(hero.heart > 0){
                 true
             } else {
                 false

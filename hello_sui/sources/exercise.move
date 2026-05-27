@@ -267,3 +267,83 @@ module hello_sui::ticket{
         ticket.seat_number
     }
 }
+
+module hello_sui::bag{
+    use std::vector;
+
+    public struct Bag has key, store{
+        id: UID,
+        items: vector<u64>,
+    }
+
+    entry fun add_item(
+        bag: &mut Bag,
+        item: u64
+    ){
+        vector::push_back(
+            &mut bag.items,
+            item
+        )
+    }
+
+    entry fun remove_item(
+        bag: &mut Bag
+    ): u64{
+        vector::pop_back(
+            &mut bag.items
+        )
+    }
+
+    entry fun count_item(bag: &Bag): u64{
+        vector::length(
+            &bag.items
+        )
+    }
+}
+
+module hello_sui::party{
+    use std::vector;
+    use sui::object::{Self, UID};
+
+    public struct Party has key, store{
+        id: UID,
+        members: vector<vector<u8>>,
+    }
+
+    entry fun add_member(party: &mut Party, member: vector<u8>){
+        vector::push_back(
+            &mut party.members,
+            member
+        );
+    }
+
+    entry fun remove_member(party: &mut Party): vector<u8>{
+        vector::pop_back(
+            &mut party.members
+        )
+    }
+
+    public fun count_member(party: &Party): u64{
+        vector::length(
+            &party.members
+        )
+    }
+
+    public fun get_first_member(party: &Party): &vector<u8>{
+        vector::borrow(
+            &party.members,
+            0
+        )
+    }
+
+    public fun theLoop(party: &mut Party){
+        let mut i = 0;
+        while (i < vector::length(&party.members)){
+            let item = vector::borrow(
+                &mut party.members,
+                i
+            );
+            i = i + 1;
+        }
+    }
+}

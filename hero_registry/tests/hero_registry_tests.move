@@ -6,11 +6,12 @@ use std::unit_test::assert_eq;
 
 #[test]
 fun test_create_hero(){
-    let mut ctx = sui::tx_context::dummy();
-    let name = b"Hero1";
-    let heart = 100;
-    let age = 30;
-    let kills = 10;
+    let ctx = sui::tx_context::dummy();
+    let name: vector<u8> = b"Hero1";
+    let heart: u64 = 100;
+    let age: u64 = 30;
+    let kills: u64 = 10;
+    let power: u64 = (heart * kills)/age;
     
     assert!(power == 33, 0);
     assert!(name == b"Hero1", 0);

@@ -1,7 +1,8 @@
 module hello_sui::practice{
-    use sui::object::{Self, UID};
-    use sui::tx_context::{Self, TxContext};
-    use sui::transfer;
+    use sui::object::{Self, UID};//Required for Object
+    use sui::tx_context::{Self, TxContext};//Required for Object
+    use sui::transfer;//Required for shared, owned and immutable object
+    use std::vector;//Required for vector type
 
     fun divide(a: u64, b: u64): u64{
         a/b
@@ -170,5 +171,30 @@ entry fun send_shield(shield: Shield, recipient: address){
 
 public fun upgrade_defense(shield: &mut Shield){
     shield.defense = shield.defense + 5;
+}
+
+public fun create_Vector(){
+    let mut vector1: vector<u64> = vector[10, 20, 30];
+
+    vector::pop_back(
+        &mut vector1
+    );
+
+    let first = vector::borrow(
+        &vector1,
+        0
+    );
+    let value = vector::borrow_mut(
+        &mut vector1,
+        2
+    );
+
+    *value = 45;
+
+     
+}
+public struct Inventory has key, store{
+    id:UID,
+    list: vector<u64>,
 }
             }
