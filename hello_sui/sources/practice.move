@@ -197,4 +197,54 @@ public struct Inventory has key, store{
     id:UID,
     list: vector<u64>,
 }
-            }
+
+public struct Bag has store{
+    items: vector<u64>,
+}
+
+public struct Character has key, store{
+    id: UID,
+    bag: Bag,
+}
+
+public fun add_items(
+    bag: &mut Bag,
+    item: u64
+){
+    vector::push_back(
+        &mut bag.items,
+        item
+    );
+}
+
+public fun remove_items(
+    bag: &mut Bag
+): u64{
+    vector::pop_back(
+        &mut bag.items
+    )
+}
+
+public fun count_items(
+    bag: &Bag
+): u64{
+    vector::length(
+        &bag.items
+    )
+}
+
+#[test]
+fun test_bag(){
+    let mut bag = Bag{
+        items: vector[],
+    };
+add_items(&mut bag, 10);
+add_items(&mut bag, 20);
+add_items(&mut bag, 30);
+assert!(count_items(&bag) == 3, 0);
+remove_items(&mut bag);
+assert!(count_items(&bag) == 2, 0);
+
+let Bag { items: _remaining_items } = bag;
+}
+}

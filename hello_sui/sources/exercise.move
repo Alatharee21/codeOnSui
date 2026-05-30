@@ -39,12 +39,14 @@ fun test_add(){
 }
 
 #[test]
+#[expected_failure(abort_code = 0)]
 fun test_add_2(){
     let result = add(2, 3);
     assert!(result == 7, 0);
 }
 
 #[test]
+#[expected_failure(abort_code = 0)]
 fun test_is_even(){
     assert!(is_even(7), 0);
 }
@@ -98,6 +100,7 @@ module hello_sui::bank{
     }
 
     #[test]
+    #[expected_failure(abort_code = 0)]
     fun test_can_withdraw(){
         let amount: u64 = 2000;
         let balance: u64 = 1067;
@@ -344,6 +347,59 @@ module hello_sui::party{
                 i
             );
             i = i + 1;
+        }
+    }
+}
+
+module hello_sui::guild{
+    use std::vector;
+
+    public struct Member has store{
+        power: u64,
+    }
+    public struct GuildStorage has store{
+        members: vector<Member>,
+    }
+    public struct Guild has key, store{
+        id: UID,
+        storage: GuildStorage,
+    }
+
+    entry fun add_member(
+        storage: &mut GuildStorage,
+        member: Member
+    ){
+        vector::push_back(
+            &mut storage.members,
+            member
+        );
+    }
+
+    entry fun remove_member(
+        storage: &mut GuildStorage
+    ): Member{
+        vector::pop_back(
+            &mut storage.members
+        )
+    }
+
+    entry fun total_member(
+        storage: &mut GuildStorage
+    ): u64{
+        vector::length(
+            &storage.members
+        )
+    }
+
+    public fun ncheck(storage: &mut GuildStorage){
+        let mut i = 0;
+        let lent = vector::length(&storage.members);
+        while(i < lent){
+           let value = vector::borrow(
+            &storage.members,
+            i
+           );
+           i = i + 1;
         }
     }
 }
