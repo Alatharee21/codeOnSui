@@ -429,3 +429,41 @@ module hello_sui::wallet_registry{
         transfer::freeze_object(walletProfile);
         }
     }
+module hello_sui::achievement{
+    use sui::object::{Self, UID};
+    use sui::tx_context::{Self, TxContext};
+    use sui::transfer;
+    use sui::event;
+
+    public struct Achievement has key, store{
+        id: UID,
+        owner: address,
+        points: u64,
+    }
+
+    public struct AchievementUnlocked has copy, drop{
+        owner: address,
+        points: u64,
+    }
+
+    entry fun unlock(
+        ctx: &mut TxContext
+    ){
+        let owner = tx_context::sender(ctx);
+        let points = 0;
+
+        let achievement = Achievement {
+            id: object::new(ctx),
+            owner,
+            points,
+        };
+        transfer::freeze_object(achievement);
+
+        event::emit(
+            AchievementUnlocked{
+        owner,
+        points
+    }
+        );
+        }
+    }

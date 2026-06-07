@@ -1,11 +1,16 @@
 module hello_sui::student {
     use sui::object::{Self, UID};
     use sui::tx_context::{Self, TxContext};
+    use sui::event;
 
     use sui::transfer;
 
     public struct Student has key, store{
         id: UID,
+        owner: address,
+        name: vector<u8>,
+    }
+    public struct StudentRegistered has copy, drop{
         owner: address,
         name: vector<u8>,
     }
@@ -23,5 +28,12 @@ module hello_sui::student {
         };
 
         transfer::freeze_object(student);
+
+        event::emit(
+            StudentRegistered{
+        owner,
+        name
+    }
+        );
     }
 }
