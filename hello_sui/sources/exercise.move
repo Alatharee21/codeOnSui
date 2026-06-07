@@ -60,8 +60,8 @@ fun test_is_noteven(){
 
 module hello_sui::bank{
     fun deposit(amount: u64): u64 {amount}
-    fun withdraw(amount: u64): u64 {amount}
-    fun calculate_fee(amount: u64): u64{
+    entry fun withdraw(amount: u64): u64 {amount}
+    entry fun calculate_fee(amount: u64): u64{
         let rate: u64 = 6/1000;
         amount * rate
     }
@@ -403,3 +403,29 @@ module hello_sui::guild{
         }
     }
 }
+
+module hello_sui::wallet_registry{
+    use sui::object::{Self, UID};
+    use sui::tx_context::{Self, TxContext};
+    use sui::transfer;
+
+    public struct WalletProfile has key, store{
+        id: UID,
+        owner: address,
+        points: u64,
+    }
+
+    entry fun register(
+        ctx: &mut TxContext
+    ){
+        let owner = tx_context::sender(ctx);
+        let points = 0;
+
+        let walletProfile = WalletProfile {
+            id: object::new(ctx),
+            owner,
+            points,
+        };
+        transfer::freeze_object(walletProfile);
+        }
+    }

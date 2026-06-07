@@ -3,8 +3,6 @@
 module nft_object_manager::nft_object_manager_tests;
 
 use nft_object_manager::nft_object_manager;
-use std::unit_test::assert_eq;
-use sui::tx_context::dummy;
 use nft_object_manager::nft_object_manager::NFT;
 
 
