@@ -467,3 +467,27 @@ module hello_sui::achievement{
         );
         }
     }
+
+    module hello_sui::gayme{
+        use sui::object::{Self, UID};
+        use sui::tx_context::{Self, TxContext};
+        use std::unit_test::assert_eq;
+
+        const E_NOT_OWNER: u64 = 1;
+
+        public struct Character has key, store{
+            id: UID,
+            owner: address,
+            level: u64,
+        }
+
+        entry fun train(
+            character: &mut Character,
+            sender: address
+        ){
+            assert!(
+                character.owner == sender,
+                E_NOT_OWNER
+            )
+        }
+    }

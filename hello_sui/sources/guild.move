@@ -1,4 +1,11 @@
 module hello_sui::guide{
+    use sui::object::{Self, UID};
+    use sui::tx_context::{Self, TxContext};
+
+
+    const E_NOT_LEADER: u64= 1;
+    const E_MAX_MEMBERS: u64= 2;
+
     public struct Rank has store{
         title: vector<u8>,
         power_bonus: u64,
@@ -10,6 +17,29 @@ module hello_sui::guide{
         level: u64,
         rank: Rank,
         total_power: u64,
+    }
+
+    public struct Guild has key, store{
+        id: UID,
+        leader: address,
+        members: u64,
+    }
+
+    entry fun add_member(
+        guilds: &mut Guild,
+        ctx: &mut TxContext
+    ){
+        let boss = tx_context::sender(ctx);
+
+        assert!(
+            guilds.leader == boss,
+            E_NOT_LEADER
+        );
+
+        assert!(
+            guilds.members < 100,
+            E_MAX_MEMBERS
+        )
     }
 
     entry fun create_member(
