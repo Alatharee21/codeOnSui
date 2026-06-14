@@ -491,3 +491,59 @@ module hello_sui::achievement{
             )
         }
     }
+
+    module hello_sui::academy{
+
+        use sui::event;
+
+        const E_NOT_THE_OWNER: u64 = 1;
+
+        //Object
+        public struct Student has key, store{
+            id: UID,
+            owner: address,
+            score: u64,
+        }
+        
+        //Event
+        public struct StudentTrained has copy, drop{
+            owner: address,
+            score: u64,
+        }
+
+        //Public Function
+        public fun train_student(
+            student: &mut Student,
+            ctx: &TxContext
+        ){
+            verify_owner(student, ctx);
+            increase_score(student);
+            let owner = tx_context::sender(ctx);
+            emit_training_event(owner, student.score);
+        }
+
+        //Helper Functions
+        fun verify_owner(
+            student: &Student,
+            ctx: &TxContext
+        ){
+            let owner = tx_context::sender(ctx);
+            assert!(student.owner == owner, E_NOT_THE_OWNER);
+        }
+
+        fun increase_score(student: &mut Student){
+            student.score = student.score + 3;
+        }
+
+        fun emit_training_event(
+            owner: address,
+            score: u64
+        ){
+            event::emit(
+                StudentTrained{
+                    owner,
+                    score,
+                }
+            );
+        }
+    }
