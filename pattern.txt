@@ -1,0 +1,24 @@
+Module layout patters:
+
+- Packages imports
+
+- Constants
+const E_NOT_OWNER: u64 = 1;
+
+
+- Structs
+struct Hero {...}
+
+- Events
+struct HeroTrained has copy, drop {...}
+
+- Public (Entry) Functions
+public entry fun train(...)
+
+- Public Functions
+public fun get_level(...)
+
+- Internal Helpers
+fun verify_owner(...)
+
+fun calculate_reward(...)
