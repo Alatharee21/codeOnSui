@@ -15,7 +15,35 @@ module hello_sui::academy{
         discipline_stud: bool,
     }
 
-    //Private Func
+    //Public Function
+    public fun updateFun(
+        _cap: &PrincipalCap,
+        academy: &mut Academy
+    ){
+        update_fee(_cap, academy);
+    }
+    public fun pauseAcademy(
+        _cap: &PrincipalCap,
+        academy: &mut Academy
+    ){
+        pause_academy(_cap, academy);
+    }
+    public fun resumeAcademy(
+        _cap: &PrincipalCap,
+        academy: &mut Academy
+    ){
+        resume_academy(_cap, academy);
+    }
+
+    public fun correctStudent(
+        _cap: &PrincipalCap,
+        _anoCap: &TeacherCap,
+        academy: &mut Academy
+    ){
+        correct_student(_cap, _anoCap, academy);
+    }
+
+    //Helper Func
     fun update_fee(
         _cap: &PrincipalCap,
         academy: &mut Academy
@@ -39,7 +67,7 @@ module hello_sui::academy{
 
     fun correct_student(
         _cap: &PrincipalCap,
-        anoCap: &TeacherCap
+        _anoCap: &TeacherCap,
         academy: &mut Academy
     ){
         academy.discipline_stud = true

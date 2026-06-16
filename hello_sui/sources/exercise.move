@@ -493,7 +493,7 @@ module hello_sui::achievement{
         }
     }
 
-    module hello_sui::academy{
+    module hello_sui::academic{
 
         use sui::event;
 
