@@ -429,6 +429,7 @@ module hello_sui::wallet_registry{
         transfer::freeze_object(walletProfile);
         }
     }
+
 module hello_sui::achievement{
     use sui::object::{Self, UID};
     use sui::tx_context::{Self, TxContext};
@@ -471,7 +472,7 @@ module hello_sui::achievement{
     module hello_sui::gayme{
         use sui::object::{Self, UID};
         use sui::tx_context::{Self, TxContext};
-        use std::unit_test::assert_eq;
+        use std::unit_test;
 
         const E_NOT_OWNER: u64 = 1;
 
@@ -545,5 +546,24 @@ module hello_sui::achievement{
                     score,
                 }
             );
+        }
+    }
+
+    module hello_sui::aca{
+
+        public struct TeacherCap has key, store{
+            id: UID,
+        }
+
+        public struct School has key, store{
+            id: UID,
+            students: u64,
+        }
+
+        public fun admit_student(
+            _cap: &TeacherCap,
+            school: &mut School
+        ){
+            school.students = school.students + 1
         }
     }
