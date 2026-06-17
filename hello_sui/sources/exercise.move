@@ -567,3 +567,27 @@ module hello_sui::achievement{
             school.students = school.students + 1
         }
     }
+
+    module hello_sui::exercise3_6{
+        public struct Leaderboard has key{
+            id: UID,
+            score: u64,
+        }
+
+        public fun increase_score(
+            leaderboard: &mut Leaderboard,
+            points: u64
+        ){
+            leaderboard.score = leaderboard.score + points
+        }
+
+        fun init(
+            ctx: &mut TxContext
+        ){
+            let leaderboard = Leaderboard{
+                id: object::new(ctx),
+                score: 0
+            };
+            transfer::share_object(leaderboard);
+        }
+    }
