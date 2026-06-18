@@ -1,4 +1,7 @@
 module staking_protocol::staking_protocol{
+    use sui::object::{Self, UID};
+    use sui::tx_context::{Self, TxContext};
+    use sui::transfer;
 
     public struct Pool has key{
         id: UID,
@@ -23,7 +26,7 @@ module staking_protocol::staking_protocol{
         remainingRewards: u64,
         }
         
-        public struct ProtocolConfig has key{
+        public struct ProtocolConfig has key, store{
             id: UID,
             minimumStakeAmount: u64,
             maximumStakeAmount: u64,
@@ -69,7 +72,6 @@ module staking_protocol::staking_protocol{
         }
 
     public fun transfer_admin_cap(
-        _admin: &AdminCap,
         admin: AdminCap,
         recipient: address
     ) {
@@ -90,5 +92,25 @@ module staking_protocol::staking_protocol{
         userStake: &UserStakePosition
     ) {
         pool.rewardRate = pool.rewardRate * userStake.stakedAmount
+    }
+
+    public fun config_protocol(
+            _admin: &AdminCap,
+            minimumStakeAmount: u64,
+            maximumStakeAmount: u64,
+            lockPeriod: u64,
+            feeRate: u64,
+            rewardEmissionRate: u64,
+            ctx: &mut TxContext
+    ){
+        let protocol_config = ProtocolConfig {
+            id: object::new(ctx),
+            minimumStakeAmount,
+            maximumStakeAmount,
+            lockPeriod,
+            feeRate,
+            rewardEmissionRate,
+        };
+        transfer::freeze_object(protocol_config);
     }
     }
