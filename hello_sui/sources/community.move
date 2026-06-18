@@ -4,6 +4,7 @@ module hello_sui::community{
     public struct Community has key{
         id: UID,
         members: u64,
+        last_post: vector<u8>,
         posts: u64,
     }
 
@@ -15,9 +16,11 @@ module hello_sui::community{
     }
 
     entry fun create_post(
-        community: &mut Community
+        community: &mut Community,
+        text: vector<u8>
     ){
-        community.posts = community.posts + 1
+        community.posts = community.posts + 1;
+        community.last_post = text
     }
 
     //Helper function
@@ -27,6 +30,7 @@ module hello_sui::community{
         let community = Community{
             id: object::new(ctx),
             members: 0,
+            last_post: vector[],
             posts: 0
         };
 
