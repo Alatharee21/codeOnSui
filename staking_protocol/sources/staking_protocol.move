@@ -7,12 +7,10 @@ use sui::object::{Self, UID};
 use sui::transfer;
 use sui::tx_context::{Self, TxContext};
 
+//Errors
 const ER_NOT_REAL_OWNER: u64 = 1;
 
-/*
-shared objects
-clean architecture
-access control*/
+//Objects
 public struct Pool has key {
     id: UID,
     totalStakedAmount: u64,
@@ -49,6 +47,7 @@ public struct ProtocolConfig has key, store {
     rewardEmissionRate: u64,
 }
 
+//Capability
 public struct AdminCap has key, store {
     id: UID,
 }
