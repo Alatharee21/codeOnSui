@@ -9,6 +9,6 @@ module hello_sui::banks{
     }
     //Users can interact with this function
     entry fun deposit(amount: u64){
-        let fee: u64 = calculate_fee(amount);
+        calculate_fee(amount);
     }
 }
