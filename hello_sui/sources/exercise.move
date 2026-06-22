@@ -591,3 +591,19 @@ module hello_sui::nft_exp {
         transfer::public_transfer(new_nft, sender);
     }
 }
+
+module hello_sui::game_currency {
+    use sui::coin::{Self, TreasuryCap};
+
+    public struct CRYSTAL has drop {}
+
+    entry fun mint_crystal(
+        treasury_cap: &mut TreasuryCap<CRYSTAL>,
+        amount: u64,
+        winner: address,
+        ctx: &mut TxContext,
+    ) {
+        let new_crystal = coin::mint(treasury_cap, amount, ctx);
+        transfer::public_transfer(new_crystal, winner);
+    }
+}
