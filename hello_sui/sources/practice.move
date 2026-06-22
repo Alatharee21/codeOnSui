@@ -2,7 +2,7 @@ module hello_sui::practice;
 
 use std::vector;
 use sui::balance::Balance;
-use sui::coin::Coin;
+use sui::coin::{Self, Coin, TreasuryCap};
 use sui::object::{Self, UID};
 use sui::transfer;
 use sui::tx_context::{Self, TxContext};
@@ -233,15 +233,21 @@ fun test_bag() {
     let Bag { items: _remaining_items } = bag;
 }
 
-public struct GOLD has drop {
-    Name: vector<u8>,
-    Symbol: vector<u8>,
-    Decimals: u64,
-}
+public struct GOLD has drop {}
 
-public struct Gol has key, store {
+public struct Gold_vault has key, store {
     id: UID,
     balance: Balance<GOLD>,
 }
 
-entry fun mint(token: &GOLD) {}
+entry fun mint_token(ctx: &mut TxContext, amount: u64, treasury_Cap: &mut TreasuryCap<GOLD>) {
+    let minter = tx_context::sender(ctx);
+    let new_coin = coin::mint(treasury_Cap, amount, ctx);
+    let new_balance = coin::into_balance(new_coin);
+
+    let the_vault = Gold_vault {
+        id: object::new(ctx),
+        balance: new_balance,
+    };
+    transfer::public_transfer(the_vault, minter);
+}
