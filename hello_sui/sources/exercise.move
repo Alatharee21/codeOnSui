@@ -664,3 +664,13 @@ module hello_sui::shop {
         })
     }
 }
+
+module hello_sui::marketplace {
+    public struct THECOIN has drop {}
+
+    public struct Merchant {}
+    public struct Treasury {}
+    public struct PurchaseMade {}
+
+    public fun purchase() {}
+}
