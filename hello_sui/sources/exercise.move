@@ -290,6 +290,7 @@ module hello_sui::bag {
     }
 }
 
+#[allow(unused_variable)]
 module hello_sui::party {
     use std::vector;
     use sui::object::{Self, UID};
@@ -337,6 +338,7 @@ module hello_sui::party {
     }
 }
 
+#[allow(unused_variable)]
 module hello_sui::guild {
     use std::vector;
 
