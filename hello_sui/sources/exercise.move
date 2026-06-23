@@ -607,3 +607,60 @@ module hello_sui::game_currency {
         transfer::public_transfer(new_crystal, winner);
     }
 }
+
+module hello_sui::shop {
+    use sui::balance::{Self, Balance};
+    use sui::coin::{Self, Coin};
+    use sui::event;
+    use sui::transfer;
+
+    public struct GEM has drop {}
+
+    public struct Shop has key, store {
+        id: UID,
+        sales: u64,
+    }
+
+    public struct Merchant has key, store {
+        id: UID,
+        balance: Balance<GEM>,
+        wallet: address,
+    }
+
+    public struct Shopped_event has copy, drop {
+        payer: address,
+        merchant: address,
+        amount: u64,
+    }
+
+    public fun buy_item(
+        ctx: &mut TxContext,
+        shop: &mut Shop,
+        coin: Coin<GEM>,
+        merchant: &mut Merchant,
+    ) {
+        let payee = tx_context::sender(ctx);
+        let amount = coin::value(&coin);
+        increase_balance(merchant, coin);
+        record_sales(shop);
+        bought_event(payee, merchant.wallet, amount);
+    }
+
+    //pFun
+    fun record_sales(shop: &mut Shop) {
+        shop.sales = shop.sales + 1;
+    }
+
+    fun increase_balance(merchant: &mut Merchant, coin: Coin<GEM>) {
+        let new_balance = coin::into_balance(coin);
+        balance::join(&mut merchant.balance, new_balance);
+    }
+
+    fun bought_event(payer: address, merchant: address, amount: u64) {
+        event::emit(Shopped_event {
+            payer,
+            merchant,
+            amount,
+        })
+    }
+}
