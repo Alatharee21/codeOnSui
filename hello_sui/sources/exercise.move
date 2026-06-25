@@ -676,3 +676,56 @@ module hello_sui::marketplace {
 
     public fun purchase() {}
 }
+
+module hello_sui::students_cert {
+    use std::string::String;
+    use sui::event;
+    use sui::transfer;
+
+    public struct StudentCertificate has key, store {
+        id: UID,
+        //MetaData
+        student_name: String,
+        course: String,
+        grade: String,
+    }
+    public struct StudentCertified has copy, drop {
+        student_name: String,
+        course: String,
+        grade: String,
+    }
+
+    public struct Principal has key {
+        id: UID,
+    }
+
+    public fun issue_cert(
+        _principal: &Principal,
+        student_name: String,
+        course: String,
+        grade: String,
+        ctx: &mut TxContext,
+    ) {
+        certificate(student_name, course, grade, ctx);
+        certfified(student_name, course, grade);
+    }
+
+    fun certificate(student_name: String, course: String, grade: String, ctx: &mut TxContext) {
+        let owner = tx_context::sender(ctx);
+        let student_certificate = StudentCertificate {
+            id: object::new(ctx),
+            student_name,
+            course,
+            grade,
+        };
+        transfer::public_transfer(student_certificate, owner);
+    }
+
+    fun certfified(student_name: String, course: String, grade: String) {
+        event::emit(StudentCertified {
+            student_name,
+            course,
+            grade,
+        })
+    }
+}
