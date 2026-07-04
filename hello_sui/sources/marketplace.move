@@ -24,7 +24,7 @@ public struct Listing has key, store {
     seller: address,
     price: u64,
     list: bool,
-    nft_id: ID,
+    nft: HeroNFT,
 }
 
 public struct Treasury has key, store {
@@ -59,7 +59,7 @@ public fun list_nft(
     seller: address,
     price: u64,
     list: bool,
-    nft_id: ID,
+    nft: HeroNFT,
     ctx: &mut TxContext,
     marketplaced: &mut Marketplace,
 ) {
@@ -69,17 +69,35 @@ public fun list_nft(
         seller,
         price,
         list,
-        nft_id,
+        nft,
     };
     transfer::public_transfer(listing, marketplace);
 }
 
-public fun cancel_listing(nft: &mut HeroNFT, listing: &mut Listing): bool {
+public fun cancel_listing(
+    _nft: &HeroNFT,
+    listing: &mut Listing,
+    marketplace: &mut Marketplace,
+): bool {
+    marketplace.listings = marketplace.listings - 1;
     listing.list == false
 }
 
-public fun purchase(payment: Coin<RASHCOIN>) {}
+public fun purchase(
+    _payment: Coin<RASHCOIN>,
+    listing: Listing,
+    marketplace: &mut Marketplace,
+    ctx: &mut TxContext,
+) {
+    collect_fees(&listing, marketplace);
 
-fun collect_fees(listing: &mut Listing, marketplace: &mut Marketplace) {
-    marketplace.fee = listing.price * 0.02;
+    let Listing { nft, .. } = listing;
+    let buyer = tx_context::sender(ctx);
+    transfer::public_transfer(nft, buyer);
+}
+
+fun collect_fees(listing: &Listing, marketplace: &mut Marketplace): u64 {
+    let fee = (listing.price * 2) / 100;
+    marketplace.fee = fee;
+    fee
 }
