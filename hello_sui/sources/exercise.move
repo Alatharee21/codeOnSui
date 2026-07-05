@@ -729,3 +729,47 @@ module hello_sui::students_cert {
         })
     }
 }
+
+module hello_sui::game_admin {
+    use sui::balance::Balance;
+    use sui::coin::Coin;
+
+    public struct SUI has drop{}
+
+    public struct Game has key, store {
+        id: UID,
+        paused: bool,
+        reward_rate: u64,
+    }
+    public struct Treasury has key, store {
+        id: UID,
+        funds: Balance<SUI>,
+    }
+    public struct AdminCap has key, store {
+        id: UID,
+    }
+    public struct TreasuryCap has key, store {
+        id: UID,
+    }
+
+    initialize()
+
+public fun pause(_: &AdminCap, game: &mut Game){
+    game.paused = true
+}
+
+public fun resume(_: &AdminCap, game: &mut Game){
+    game.paused = false
+}
+
+public fun update_reward_rate(_: &AdminCap, new_rate: u64, game: &mut Game){
+    game.reward_rate = new_rate
+}
+
+public fun withdraw_treasury(_: &TreasuryCap, treasury: Treasury, teamTreasury: address){
+    let money = Coin::into_balance<SUI>;
+    transfer::public_transfer(money, teamTreasury);
+}
+
+play()
+}
