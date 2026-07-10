@@ -1,11 +1,16 @@
 module hello_sui::marketplaces;
 
-use sui::balance::Balance;
+use sui::balance::{Self, Balance};
 use sui::coin::{Self, Coin};
-use sui::object::{Self, UID, last_created};
+use sui::object::{Self, UID};
 use sui::transfer;
 use sui::tx_context::{Self, TxContext};
 use sui::url::Url;
+
+const E_NOT_OWNER: u64 = 0;
+const E_INSUFFICIENT_FUND: u64 = 1;
+const E_VAULT_IS_EMPTY: u64 = 2;
+const E_NOT_LISTED: u64 = 3;
 
 //Coin
 public struct RASHCOIN has drop {}
@@ -17,6 +22,7 @@ public struct HeroNFT has key, store {
     description: vector<u8>,
     rarity: u64,
     image_url: Url,
+    owner: address,
 }
 
 public struct Listing has drop {
@@ -61,27 +67,40 @@ public struct ListingCancelled has copy, drop {
     list: bool,
 }
 
-public fun list_nft(heroNFT: HeroNFT, listing: &mut Listing, marketplaced: &mut Marketplace) {
+public fun list_nft(
+    heroNFT: HeroNFT,
+    listing: &mut Listing,
+    marketplaced: &mut Marketplace,
+    ctx: &mut TxContext,
+) {
+    assert!(heroNFT.owner == tx_context::sender(ctx), E_NOT_OWNER);
+
     listing.list = true;
     listing.nft = object::id(&heroNFT);
     marketplaced.listings = marketplaced.listings + 1;
     transfer::public_share_object(heroNFT);
 }
 
-public fun cancel_listing(_nft: HeroNFT, listing: &mut Listing, marketplace: &mut Marketplace) {
+public fun cancel_listing(
+    _nft: HeroNFT,
+    listing: &mut Listing,
+    marketplace: &mut Marketplace,
+): bool {
     marketplace.listings = marketplace.listings - 1;
     listing.list = false
 }
 
 public fun purchase(
-    _payment: Coin<RASHCOIN>,
+    payment: Coin<RASHCOIN>,
     listing: &mut Listing,
     marketplace: &mut Marketplace,
     ctx: &mut TxContext,
+    nft: HeroNFT,
 ) {
+    assert!(coin::value(&payment) > 0, E_INSUFFICIENT_FUND);
+    assert!(!listing.list, E_NOT_LISTED);
     collect_fees(listing, marketplace);
     let buyer = tx_context::sender(ctx);
-    let nft = listing.nft;
     listing.list = false;
     transfer::public_transfer(nft, buyer);
 }
@@ -96,9 +115,13 @@ public fun update_fee(_: &AdminCap, market: &mut Marketplace, fee: u64) {
     market.fee = fee
 }
 
-public fun withdraw(_: &TreasuryCap, treasury: &mut Treasury, ctx: &mut TxContext) {
+public fun withdraw_fees(_: &TreasuryCap, treasury: &mut Treasury, ctx: &mut TxContext) {
+    let balance_amount = balance::value<RASHCOIN>(&treasury.balance);
+    assert!(balance_amount > 0, E_VAULT_IS_EMPTY);
+
     let team = tx_context::sender(ctx);
-    let amount = coin::balance<RASHCOIN>(&treasury.balance);
-    let treasure = coin::withdraw<RASHCOIN>(&mut treasury.balance, amount);
+
+    let treasure = coin::take(&mut treasury.balance, balance_amount, ctx);
+
     transfer::public_transfer(treasure, team);
 }

@@ -1,21 +1,31 @@
 module hello_sui::calculator {
-    public fun add(a: u64, b: u64): u64 {
+    public fun calculations(a: u64, b: u64) {
+        add(a, b);
+        subtract(a, b);
+        multiply(a, b);
+        divide(a, b);
+        max(a, b);
+        min(a, b);
+        is_even(a);
+    }
+
+    fun add(a: u64, b: u64): u64 {
         a + b
     }
 
-    public fun subtract(a: u64, b: u64): u64 {
+    fun subtract(a: u64, b: u64): u64 {
         a - b
     }
 
-    public fun multiply(a: u64, b: u64): u64 {
+    fun multiply(a: u64, b: u64): u64 {
         a * b
     }
 
-    public fun divide(a: u64, b: u64): u64 {
+    fun divide(a: u64, b: u64): u64 {
         a / b
     }
 
-    public fun max(a: u64, b: u64): u64 {
+    fun max(a: u64, b: u64): u64 {
         if (a > b) {
             a
         } else {
@@ -23,7 +33,7 @@ module hello_sui::calculator {
         }
     }
 
-    public fun min(a: u64, b: u64): u64 {
+    fun min(a: u64, b: u64): u64 {
         if (a < b) {
             a
         } else {
@@ -31,33 +41,29 @@ module hello_sui::calculator {
         }
     }
 
-    public fun is_even(a: u64): bool {
+    fun is_even(a: u64): bool {
         a % 2 == 0
     }
 
     #[test]
 
     fun test_add() {
-        let result = add(2, 3);
-        assert!(result == 5, 0);
-    }
+        let a: u64 = 3;
+        let b: u64 = 2;
+        let addition = add(2, 3);
+        let substraction = subtract(a, b);
+        let multiplication = multiply(a, b);
+        let division = divide(a, b);
+        let maximum = max(a, b);
+        let minimum = min(a, b);
 
-    #[test]
-    #[expected_failure(abort_code = 0)]
-    fun test_add_2() {
-        let result = add(2, 3);
-        assert!(result == 7, 0);
-    }
-
-    #[test]
-    #[expected_failure(abort_code = 0)]
-    fun test_is_even() {
-        assert!(is_even(7), 0);
-    }
-
-    #[test]
-    fun test_is_noteven() {
-        assert!(!is_even(7), 0);
+        assert!(addition == 5, 0);
+        assert!(substraction == 1, 0);
+        assert!(multiplication == 6, 0);
+        assert!(division == 5, 0);
+        assert!(maximum == 5, 0);
+        assert!(minimum == 5, 0);
+        assert!(is_even(addition), 0);
     }
 }
 
@@ -731,10 +737,16 @@ module hello_sui::students_cert {
 }
 
 module hello_sui::game_admin {
-    use sui::balance::Balance;
-    use sui::coin::Coin;
+    use sui::balance::{Self, Balance};
+    use sui::coin::{Self, Coin};
+    use sui::event;
+    use sui::object::{Self, UID};
+    use sui::transfer;
+    use sui::tx_context::{Self, TxContext};
 
-    public struct SUI has drop{}
+    const E_GAME_NOT_ACTIVE: u64 = 0;
+
+    public struct SUI has drop {}
 
     public struct Game has key, store {
         id: UID,
@@ -752,24 +764,102 @@ module hello_sui::game_admin {
         id: UID,
     }
 
-    initialize()
+    public struct GamePaused has copy, drop {
+        paused: bool,
+    }
+    public struct GameResumed has copy, drop {
+        paused: bool,
+    }
+    public struct GameInitialized has copy, drop {
+        paused: bool,
+        reward_rate: u64,
+    }
+    public struct RewardRateUpdated has copy, drop {
+        reward_rate: u64,
+    }
 
-public fun pause(_: &AdminCap, game: &mut Game){
-    game.paused = true
+    fun initialize(paused: bool, reward_rate: u64, ctx: &mut TxContext) {
+        let initializer = tx_context::sender(ctx);
+        let game = Game {
+            id: object::new(ctx),
+            paused,
+            reward_rate,
+        };
+        transfer::public_transfer(game, initializer);
+        event::emit(GameInitialized {
+            paused,
+            reward_rate,
+        })
+    }
+
+    public fun pause(_: &AdminCap, game: &mut Game) {
+        game.paused = true;
+        event::emit(GamePaused {
+            paused: game.paused,
+        })
+    }
+
+    public fun resume(_: &AdminCap, game: &mut Game) {
+        game.paused = false;
+        event::emit(GameResumed {
+            paused: game.paused,
+        })
+    }
+
+    public fun update_reward_rate(_: &AdminCap, new_rate: u64, game: &mut Game) {
+        game.reward_rate = new_rate;
+        event::emit(RewardRateUpdated {
+            reward_rate: game.reward_rate,
+        })
+    }
+
+    public fun withdraw_treasury(_: &TreasuryCap, treasury: Treasury, ctx: &mut TxContext) {
+        let Treasury { id, funds } = treasury;
+        let coin = coin::from_balance(funds, ctx);
+        let teamTreasury = tx_context::sender(ctx);
+        transfer::public_transfer(coin, teamTreasury);
+    }
+
+    public fun play(game: &mut Game) {
+        assert!(!game.paused, E_GAME_NOT_ACTIVE);
+    }
 }
 
-public fun resume(_: &AdminCap, game: &mut Game){
-    game.paused = false
-}
+module hello_sui::dynamic_hero {
+    use std::string::String;
+    use sui::dynamic_field as df;
 
-public fun update_reward_rate(_: &AdminCap, new_rate: u64, game: &mut Game){
-    game.reward_rate = new_rate
-}
+    public struct Hero has key, store {
+        id: UID,
+        name: vector<u8>,
+        level: u64,
+    }
 
-public fun withdraw_treasury(_: &TreasuryCap, treasury: Treasury, teamTreasury: address){
-    let money = Coin::into_balance<SUI>;
-    transfer::public_transfer(money, teamTreasury);
-}
+    public struct Additional_data has drop, store {
+        weapons: String,
+        pets: String,
+        achievements: String,
+        titles: String,
+        cosmetics: u64,
+    }
 
-play()
+    public fun dynamic_data(
+        hero: &mut Hero,
+        key_name: String,
+        weapons: String,
+        pets: String,
+        achievements: String,
+        titles: String,
+        cosmetics: u64,
+    ) {
+        let additional_data = Additional_data {
+            weapons,
+            pets,
+            achievements,
+            titles,
+            cosmetics,
+        };
+
+        df::add(&mut hero.id, key_name, additional_data);
+    }
 }
