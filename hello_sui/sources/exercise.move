@@ -863,3 +863,16 @@ module hello_sui::dynamic_hero {
         df::add(&mut hero.id, key_name, additional_data);
     }
 }
+
+module hello_sui::onChainMonster {
+    use std::string::String;
+
+    public struct Player has key, store { id: UID }
+    public struct Inventory has key, store { id: UID, weapon: u64, egg: u64 }
+    public struct Monster has key { id: UID, item: String } //Dynamic Object Field
+    public struct Overtime has drop, store {
+        achievement: String,
+        title: String,
+        battle_team: String,
+    } //Dynamic field
+}
