@@ -1,7 +1,8 @@
-
-
 module voting_system::dashboard;
-use sui::object::{Self,UID};
+
+use std::string::String;
+use sui::object::{Self, UID};
+use sui::transfer;
 
 public struct Proposal has key {
     id: UID,
@@ -18,17 +19,17 @@ public fun create_proposal(
     title: String,
     description: String,
     expiration_date: u64,
-    ctx: &mut TxContext
-){
-    let proposal = Proposal{
+    ctx: &mut TxContext,
+) {
+    let proposal = Proposal {
         id: object::new(ctx),
-    title,
-    description,
-    voted_yes_count: 0,
-    voted_no_count: 0,
-    expiration_date,
-    creator: ctx.sender(),
-    voter_registry: vector[],
+        title,
+        description,
+        voted_yes_count: 0,
+        voted_no_count: 0,
+        expiration_date,
+        creator: ctx.sender(),
+        voter_registry: vector[],
     };
     transfer::share_object(proposal);
 }
