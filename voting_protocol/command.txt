@@ -1,0 +1,33 @@
+
+//Using call allows calling one function
+sui client call \
+--package 0x674c14fefbb97a6fffe0a018c9f9c8b612a820dffb2cf70e46fef77db84ee190 \
+--module dashboard \
+--function create_proposal \
+--args "Proposal 1" "Proposal description 1" "1816038940" \
+--gas-budget 100000000
+
+//Using ptb allows calling multiple functions
+sui client ptb \
+--move-call 0x674c14fefbb97a6fffe0a018c9f9c8b612a820dffb2cf70e46fef77db84ee190::dashboard::create_proposal \
+'"Proposal 2"' \
+'"Proposal description 2"' \
+1816038940
+
+
+sui client ptb \
+--move-call 0x674c14fefbb97a6fffe0a018c9f9c8b612a820dffb2cf70e46fef77db84ee190::dashboard::create_proposal \
+'"Proposal 3"' '"Proposal description 3"' 1816038940 \
+--move-call 0x674c14fefbb97a6fffe0a018c9f9c8b612a820dffb2cf70e46fef77db84ee190::dashboard::create_proposal \
+'"Proposal 4"' '"Proposal description 4"' 1816038940 \
+--move-call 0x674c14fefbb97a6fffe0a018c9f9c8b612a820dffb2cf70e46fef77db84ee190::dashboard::create_proposal \
+'"Proposal 5"' '"Proposal description 5"' 1816038940 
+
+
+sui client ptb \
+--move-call 0x674c14fefbb97a6fffe0a018c9f9c8b612a820dffb2cf70e46fef77db84ee190::dashboard::create_proposal \
+'"Proposal 7"' '"Proposal description 7"' 1816038940 \
+--split-coins gas "[1000]" \
+--assign coin \
+--transfer-objects "[coin]" @0x4d8daa61b7afbf11a5b5539e8708d7edc4233e38f49b69d23cedfa55971f9840
+--gas-budget 100000000
