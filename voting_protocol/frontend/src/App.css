@@ -1,19 +1,227 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
+.app-shell {
+  width: min(1100px, 100%);
+  margin: 0 auto;
+  padding: 32px 24px;
+}
 
-  &:hover {
-    border-color: var(--accent-border);
+.hero-panel {
+  text-align: left;
+  padding: 32px 32px 24px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  margin-bottom: 32px;
+  background: rgba(170, 59, 255, 0.05);
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.85rem;
+  color: var(--accent);
+}
+
+.hero-copy {
+  margin: 16px 0 0;
+  max-width: 720px;
+}
+
+.proposal-form,
+.proposal-summary {
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--code-bg);
+  padding: 28px;
+}
+
+.form-panel {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.proposal-form h2,
+.proposal-summary h2,
+.proposal-list h2 {
+  margin-top: 0;
+}
+
+.proposal-form label {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 18px;
+  text-align: left;
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+.proposal-form input,
+.proposal-form textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  font: inherit;
+  color: var(--text-h);
+  background: #fff;
+}
+
+.proposal-form textarea {
+  resize: vertical;
+}
+
+.form-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.proposal-form button {
+  appearance: none;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 18px;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.proposal-form button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.proposal-form button:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
+.hint {
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.feedback {
+  margin-top: 18px;
+  color: var(--text-h);
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.summary-grid div {
+  padding: 18px;
+  background: white;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+}
+
+.summary-grid span {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text-h);
+}
+
+.proposal-list {
+  text-align: left;
+}
+
+.proposal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.proposal-card {
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--bg);
+  display: grid;
+  gap: 18px;
+}
+
+.proposal-header h3 {
+  margin: 0 0 8px;
+}
+
+.proposal-header p {
+  margin: 0;
+  color: var(--text);
+}
+
+.proposal-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.proposal-votes {
+  display: flex;
+  gap: 20px;
+}
+
+.proposal-votes div {
+  text-align: center;
+}
+
+.proposal-votes strong {
+  display: block;
+  font-size: 1.5rem;
+}
+
+.proposal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.proposal-actions button {
+  flex: 1;
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  padding: 10px 12px;
+  background: white;
+  color: var(--accent);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.proposal-actions button:hover {
+  background: var(--accent);
+  color: white;
+}
+
+.empty-state {
+  margin-top: 20px;
+  padding: 24px;
+  border: 1px dashed var(--border);
+  border-radius: 18px;
+  color: var(--text);
+}
+
+@media (max-width: 900px) {
+  .form-panel,
+  .proposal-grid {
+    grid-template-columns: 1fr;
   }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .app-shell {
+    padding: 20px 16px;
   }
 }
 
